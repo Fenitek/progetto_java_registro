@@ -7,6 +7,7 @@ import java.util.Locale;
 
 public class Calendario {
 
+    //commendo di Alexx08Green
 	 // variabili principali del calendario
     private LocalDate data; // data: anno-mese-giorno
     private final int GIORNI_CALENDARIO; //giorni dell'inizializzazione massimi del calendario
