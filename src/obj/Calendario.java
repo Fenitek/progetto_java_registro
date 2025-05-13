@@ -1,6 +1,7 @@
 package obj;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
 import java.util.Locale;
@@ -12,6 +13,11 @@ public class Calendario {
     private LocalDate data; // data: anno-mese-giorno
     private final int GIORNI_CALENDARIO; //giorni dell'inizializzazione massimi del calendario
     private LocalDate[] calendarioDate; // calendario usato per la stampa dei giorni.
+
+    //dati del giorno di oggi
+    private int giornoOggi;
+    private int meseOggi;
+    private int annoOggi;
     
  // codici base ANSI - per gestire i colori
     public static final String RESET = "\u001B[0m";
@@ -24,7 +30,11 @@ public class Calendario {
         this.GIORNI_CALENDARIO = _calendarioGiorni;
         this.calendarioDate = new LocalDate[GIORNI_CALENDARIO]; //inizializzo l'array del calendario
         inizializzaCalendario(_anno, _mese, _giorno);
-        
+
+        // salvo i dati mese giorno ed anno.
+        this.giornoOggi = data.getDayOfMonth();
+        this.meseOggi = data.getMonthValue();
+        this.annoOggi = data.getYear();
         
     }
     
@@ -63,7 +73,7 @@ public class Calendario {
     
     public void stampaCalendario() {
         // Intestazione: mese e anno
-        YearMonth ym = YearMonth.of(data.getYear(), data.getMonth()); 
+        YearMonth ym = YearMonth.of(annoOggi, giornoOggi);
         String meseNome = ym.getMonth().getDisplayName(TextStyle.FULL, Locale.ITALIAN); // testo in italiano
         System.out.printf("     %s %d%n", meseNome, ym.getYear());
 
@@ -72,21 +82,33 @@ public class Calendario {
 
         // Calcolo offset del primo giorno
         LocalDate primo = ym.atDay(1);
-        int offset = primo.getDayOfWeek().getValue(); // 1=Lu … 7=Do
+        int offset =  primo.getDayOfWeek().getValue(); // 1=Lu … 7=Do
 
-        // Spazi vuoti prima del 1° giorno
+        // Spazi vuoti prima del 1° giorno, in base al primo giorno del mese, l'offset è diverso.
         for(int i = 1; i < offset; i++) {
             System.out.print("   ");
         }
 
         // Stampa tutti i giorni
         for(int giorno = 1; giorno <= ym.lengthOfMonth(); giorno++) {
-            System.out.printf("%2d ", giorno);
-            // a fine settimana, va a capo
+            String format = "%2d ";
+
+            if (giorno == giornoOggi) {
+                // se è il giorno speciale, applica il colore ROSSO
+                System.out.printf(RED + format + RESET, giorno);
+            } else {
+                // altrimenti stampa normalmente
+                System.out.printf(format, giorno);
+            }
+
             if ((giorno + offset - 1) % 7 == 0) {
                 System.out.println();
             }
         }
         System.out.println();  // linea finale
+    }
+
+    public void infoGiorno(LocalDate _giorno){
+        //_giorno
     }
 }
