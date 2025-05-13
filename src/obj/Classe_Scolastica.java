@@ -19,6 +19,6 @@ public class Classe_Scolastica {
 //        }
 
 
-        return stud;
+        return null;
     }
 }
