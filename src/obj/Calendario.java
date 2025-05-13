@@ -1,7 +1,6 @@
 package obj;
 
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
 import java.util.Locale;
@@ -108,7 +107,4 @@ public class Calendario {
         System.out.println();  // linea finale
     }
 
-    public void infoGiorno(LocalDate _giorno){
-        //_giorno
-    }
 }

@@ -10,6 +10,7 @@ public class CalendarioTester {
         LocalDate biologiaDate = LocalDate.of(2025, 05, 11);
         Compito biologia1 = new Compito("Studiare tutto", "Biologia", biologiaDate);
         cal.stampaCalendario();
+
     }
 
 
