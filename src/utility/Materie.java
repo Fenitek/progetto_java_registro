@@ -10,8 +10,10 @@ public class Materie {
         //indice che ritornerò, se è uguale a -1 vuoldire che non ho trovato la materia, lo comunicherò all'utente
         int indice = -1;
 
+        //variabile di controllo se ho trovato
         boolean trovato = false;
         for (int i = 0; i < nomeMateria.length && !trovato; i++){
+            //contorllo ingorando maiuscole e minusocle la stringa data come parametro e quella nell'array
             if (nomeMateria[i].equalsIgnoreCase(p_materia)) {
                 trovato = true;
                 indice = i;
