@@ -50,6 +50,20 @@ public class Calendario {
     public LocalDate getDataOggi() {
     	return this.data;
     }
+
+
+    public int getAnnoOggi() {                // se ti serve solo l'anno
+        return annoOggi;
+    }
+
+    public int getMeseOggi() {                // opzionale
+        return meseOggi;
+    }
+
+    public int getGiornoOggi() {              // opzionale
+        return giornoOggi;
+    }
+
     public LocalDate[] getDataCalendario() {
     	return this.calendarioDate;
     }
