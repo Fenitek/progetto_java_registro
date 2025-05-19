@@ -1,5 +1,8 @@
 package obj;
+import utility.Materie;
+
 import java.time.LocalDate;
+import utility.*;
 
 public class Studente {
 	//VARIABILI D'ISTANZA
@@ -60,6 +63,25 @@ public class Studente {
 	public int getNumPresenze() {
 		return this.numPresenze;
 	}
+	//get numVoti
+	public int getNumVoti (String p_materia) {
+		//numero di voti della materia selezionata
+		int riga = Materie.indiceMateria(p_materia);
+		//prendo quanti voti ci sono in una riga
+		int indiceVoti = 0;
+
+		//controllo fine ciclo
+		boolean fine = false;
+
+		for (int i = 0; i < voti[0].length && !fine; i++) {
+			if (voti[riga][i] == null) {
+				indiceVoti = i;
+				fine = true;
+			}
+		}
+
+		return indiceVoti;
+	}
 
 	//METODI SET
 	//metodo set nota
@@ -67,8 +89,14 @@ public class Studente {
 		//inizializzo nota
 		this.note[p_indice] = new Nota(p_testo, p_data);
 	}
-	//set voto DA FINIRE, MANCA L'ASSEGNAIZONE DEL VOTO DENTRO ALLA MATRICE, DOBBIAMO GESTIRE GLI INDICI
+	//set voto
 	public void setVoti(String p_materia, int p_voto, LocalDate p_data) {
+		//PRENDO LA RIGA DALLA CLASSE MATERIE NEL PACKAGE UTILITY IN BASE ALLA STRING CLASSE
+		int riga = Materie.indiceMateria(p_materia);
+		int colonna = getNumVoti(p_materia) + 1;
+
+		//asseggno voto
+		voti[riga][colonna] = new Voti(p_materia, p_voto, p_data);
 
 	}
 	//set presenza
