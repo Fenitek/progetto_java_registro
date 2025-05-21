@@ -8,7 +8,7 @@ public class Classe_Scolastica {
     private final int MAX_STUDENTI;
     private Studente[] classe;
     static Scanner in = new Scanner(System.in);
-    private final Calendario calendario;   // <‑‑ nuovo campo
+    private final Calendario calendario;
 
     public Classe_Scolastica(String _sezione, int _classe, String _indirizzo, int _maxStudenti, Calendario _calendario) {
         this.MAX_STUDENTI = _maxStudenti;
@@ -81,4 +81,11 @@ public class Classe_Scolastica {
         return classe;
     }
 
+    public int getMAX_STUDENTI(){
+        return this.MAX_STUDENTI;
+    }
+
+    public Calendario getCalendario() {
+        return calendario;
+    }
 }
