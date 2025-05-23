@@ -7,8 +7,7 @@ import utility.*;
 public class Studente {
 	//VARIABILI D'ISTANZA
 	//nome e cognome
-	private String nome;
-	private String cognome;
+	private String nomeCognome;
 	//data di nascita
 	private LocalDate dataNascita;
 	//array di presenze
@@ -24,10 +23,6 @@ public class Studente {
 
 	//METODO COSTRUTTORE
 	public Studente(String name, String surname, LocalDate p_data) {
-		//nome
-		this.nome = name;
-		//cognome
-		this.cognome = surname;
 		//data di nascita
 		this.dataNascita = p_data;
 		//array oggetto presenze
@@ -41,11 +36,8 @@ public class Studente {
 	//METODI D'ISTANZA
 	//METODI GET
 	//get nomecognome
-	public String getNome() {
-		return this.nome;
-	}
-	public String getCognome() {
-		return this.cognome;
+	public String getNomeCognome() {
+		return this.nomeCognome;
 	}
 	//get data nascita
 	public LocalDate getDataNascita() {
