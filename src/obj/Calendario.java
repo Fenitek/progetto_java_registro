@@ -121,4 +121,14 @@ public class Calendario {
         System.out.println();  // linea finale
     }
 
+    // Restituisce la prima data del calendario scolastico (data di inizio)
+    public LocalDate getInizioAnno() {
+        return this.calendarioDate[0];
+    }
+
+    // Restituisce l'ultima data del calendario scolastico (data di fine)
+    public LocalDate getFineAnno() {
+        return this.calendarioDate[this.calendarioDate.length - 1];
+    }
+
 }
