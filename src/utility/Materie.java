@@ -3,7 +3,7 @@ package utility;
 public class Materie {
     //VARIABILI
     //arrray di indici
-    public static String[] arrayMateria= {"Italinao","Matematica","Informatica","Ginnastica","Storia","Inglese","Educaizone civica","Tpsit","Sistemi e reti","Telecomunicazioni"};
+    public static String[] arrayMateria= {"Italiano","Matematica","Informatica","Ginnastica","Storia","Inglese","Educazione civica","Tpsit","Sistemi e reti","Telecomunicazioni"};
 
     //metodo che cerca l'indice in base alla materia
     public static int indiceMateria (String p_materia) {

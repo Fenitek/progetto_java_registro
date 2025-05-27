@@ -3,7 +3,6 @@ package tester;
 import obj.*;
 import utility.Materie;
 
-import java.lang.reflect.Field;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -14,25 +13,25 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
-
 public class MenuPrincipale {
 
     // ---------------------------- STATE ----------------------------
-    private static final Scanner SC = new Scanner(System.in); // Scanner per input da tastiera
-    private static final DateTimeFormatter DF = DateTimeFormatter.ISO_LOCAL_DATE; // Formato per le date
+    private static final Scanner SC = new Scanner(System.in);
+    private static final DateTimeFormatter DF = DateTimeFormatter.ISO_LOCAL_DATE;
 
-    private static Calendario calendario; // Calendario dell'anno scolastico
-    private static Classe_Scolastica classe; // Classe gestita
-    private static final List<Compito> COMPITI = new ArrayList<>(); // Lista dei compiti assegnati
+    private static Calendario calendario;
+    private static Classe_Scolastica classe;
+    private static final List<Compito> COMPITI = new ArrayList<>();
 
     // ----------------------------- MAIN -----------------------------
     public static void main(String[] args) {
-        configuraRegistro(); // Configura i dati iniziali del registro scolastico
-        menuLoop(); // Avvia il ciclo del menu principale
+        configuraRegistro();
+        menuLoop();
         System.out.println("\nGrazie per aver utilizzato il registro. Arrivederci!");
     }
 
     // ======================= CONFIGURAZIONE =======================
+
     /**
      * Permette di inserire i dati fondamentali per iniziare a utilizzare il registro:
      * anno scolastico, sezione, anno di corso, indirizzo, numero massimo studenti.
@@ -43,23 +42,28 @@ public class MenuPrincipale {
         int anno;
         // Inserimento dell'anno scolastico (deve essere >= 1900)
         while (true) {
-            System.out.print("Anno scolastico (>= 1900): ");
+            System.out.print("Anno scolastico: ");
             try {
                 anno = Integer.parseInt(SC.nextLine());
                 if (anno >= 1900) break;
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {
+            }
             System.out.println("Valore non valido.");
         }
 
         // Inizializzazione del calendario scolastico a partire dal 12 settembre
         int giorno = 12, mese = 9, durata = 250;
         while (true) {
-            try { calendario = new Calendario(anno, mese, giorno, durata); break; }
-            catch (DateTimeException ex) { durata--; }
+            try {
+                calendario = new Calendario(anno, mese, giorno, durata);
+                break;
+            } catch (DateTimeException ex) {
+                durata--;
+            }
         }
 
         // Inserimento dati della classe
-        System.out.print("Sezione: ");
+        System.out.print("Sezione (es. A,B,C): ");
         String sezione = SC.nextLine().trim().toUpperCase();
 
         int annoCorso;
@@ -68,11 +72,12 @@ public class MenuPrincipale {
             try {
                 annoCorso = Integer.parseInt(SC.nextLine());
                 if (annoCorso >= 1 && annoCorso <= 5) break;
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {
+            }
             System.out.println("Valore non valido.");
         }
 
-        System.out.print("Indirizzo: ");
+        System.out.print("Indirizzo (es. Liceo, Informatica): ");
         String indirizzo = SC.nextLine();
 
         int maxStud;
@@ -81,7 +86,8 @@ public class MenuPrincipale {
             try {
                 maxStud = Integer.parseInt(SC.nextLine());
                 if (maxStud > 0) break;
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {
+            }
             System.out.println("Valore non valido.");
         }
 
@@ -91,6 +97,7 @@ public class MenuPrincipale {
     }
 
     // ========================== MENU LOOP ==========================
+
     /**
      * Ciclo principale che mostra il menu e gestisce le operazioni dell'utente.
      */
@@ -109,7 +116,7 @@ public class MenuPrincipale {
                 case "7" -> reportClasse();
                 case "8" -> calendarioConCompiti();
                 case "9" -> attivo = false; // Esce dal programma
-                default  -> System.out.println("Opzione non valida.");
+                default -> System.out.println("Opzione non valida.");
             }
             System.out.println();
         }
@@ -137,18 +144,18 @@ public class MenuPrincipale {
      * Permette di inserire un nuovo studente nella classe, se c'è posto.
      */
     private static void inserisciStudente() {
-        Studente[] arr = classe.getStudenti();
-        int pos = firstFree(arr);
-        if (pos == -1) { System.out.println("Classe piena."); return; }
-
-        System.out.print("Nome: "); String nome = SC.nextLine();
-        System.out.print("Cognome: "); String cog = SC.nextLine();
-        LocalDate nascita = readDate("Nascita (yyyy-MM-dd): ");
-
+        ArrayList<Studente> lista = classe.getStudenti();
+        if (lista.size() >= classe.getMAX_STUDENTI()) {
+            System.out.println("Classe piena.");
+            return;
+        }
+        System.out.print("Nome: ");
+        String nome = SC.nextLine();
+        System.out.print("Cognome: ");
+        String cog = SC.nextLine();
+        LocalDate nascita = readDate("Nascita (yyyy-MM-dd): ", false);
         Studente s = new Studente(nome, cog, nascita);
-        // Imposta anche il campo privato nomeCognome (se presente)
-        try { Field f = Studente.class.getDeclaredField("nomeCognome"); f.setAccessible(true); f.set(s, nome+" "+cog);} catch (Exception ignored) {}
-        arr[pos] = s;
+        lista.add(s);
         System.out.println("Studente inserito.");
     }
 
@@ -156,10 +163,16 @@ public class MenuPrincipale {
      * Registra una presenza o assenza per uno studente specifico in una certa data.
      */
     private static void registraPresenza() {
-        Studente s = pickStudente(); if(s==null) return;
-        LocalDate d = readDate("Data (yyyy-MM-dd): ");
-        System.out.print("Stato (P/A): "); char stato = SC.nextLine().trim().toUpperCase().charAt(0);
-        int pos = firstFree(s.getPresenze()); if(pos==-1){ System.out.println("Array pieno."); return; }
+        Studente s = pickStudente();
+        if (s == null) return; //studente non trovato
+        LocalDate d = readDate("Data (yyyy-MM-dd): ", true);
+        System.out.print("Stato (P/A): ");
+        char stato = SC.nextLine().trim().toUpperCase().charAt(0);
+        int pos = firstFree(s.getPresenze());
+        if (pos == -1) {
+            System.out.println("Array pieno.");
+            return;
+        }
         s.setPresenze(d, stato, pos);
         System.out.println("Presenza registrata.");
     }
@@ -168,11 +181,16 @@ public class MenuPrincipale {
      * Permette di inserire un nuovo voto per uno studente in una materia, indicando anche la data.
      */
     private static void inserisciVoto() {
-        Studente s = pickStudente(); if(s==null) return;
-        System.out.println("Materie: "); for(String m: Materie.arrayMateria) System.out.print(m+" "); System.out.println();
-        System.out.print("Materia: "); String mat = SC.nextLine();
-        System.out.print("Voto (1-10): "); int voto = Integer.parseInt(SC.nextLine());
-        LocalDate d = readDate("Data verifica (yyyy-MM-dd): ");
+        Studente s = pickStudente();
+        if (s == null) return;
+        System.out.println("Materie: ");
+        for (String m : Materie.arrayMateria) System.out.print(m + " ");
+        System.out.println();
+        System.out.print("Materia: ");
+        String mat = SC.nextLine();
+        System.out.print("Voto (1-10): ");
+        int voto = Integer.parseInt(SC.nextLine());
+        LocalDate d = readDate("Data verifica (yyyy-MM-dd): ", true);
         s.setVoti(mat, voto, d);
         System.out.println("Voto inserito.");
     }
@@ -181,10 +199,16 @@ public class MenuPrincipale {
      * Inserisce una nota disciplinare o informativa per uno studente.
      */
     private static void inserisciNota() {
-        Studente s = pickStudente(); if(s==null) return;
-        LocalDate d = readDate("Data (yyyy-MM-dd): ");
-        System.out.print("Nota: "); String testo = SC.nextLine();
-        int pos = firstFree(s.getNote()); if(pos==-1){ System.out.println("Array pieno."); return; }
+        Studente s = pickStudente();
+        if (s == null) return;
+        LocalDate d = readDate("Data (yyyy-MM-dd): ", true);
+        System.out.print("Nota: ");
+        String testo = SC.nextLine();
+        int pos = firstFree(s.getNote());
+        if (pos == -1) {
+            System.out.println("Array pieno.");
+            return;
+        }
         s.setNote(d, testo, pos);
         System.out.println("Nota inserita.");
     }
@@ -193,9 +217,11 @@ public class MenuPrincipale {
      * Permette di inserire un nuovo compito assegnato alla classe.
      */
     private static void inserisciCompito() {
-        System.out.print("Materia: "); String mat = SC.nextLine();
-        LocalDate cons = readDate("Consegna (yyyy-MM-dd): ");
-        System.out.print("Descrizione: "); String desc = SC.nextLine();
+        System.out.print("Materia: ");
+        String mat = SC.nextLine();
+        LocalDate cons = readDate("Consegna (yyyy-MM-dd): ", true);
+        System.out.print("Descrizione: ");
+        String desc = SC.nextLine();
         COMPITI.add(new Compito(desc, mat, cons));
         System.out.println("Compito registrato.");
     }
@@ -204,34 +230,46 @@ public class MenuPrincipale {
      * Stampa il report di uno studente selezionato, mostrando presenze, voti e note.
      */
     private static void reportSingolo() {
-        Studente s = pickStudente(); if(s!=null) stampaStudente(s);
+        Studente s =
+                pickStudente();
+        if (s != null) stampaStudente(s);
     }
 
     /**
      * Stampa un report di tutti gli studenti della classe.
      */
     private static void reportClasse() {
-        for(Studente s: classe.getStudenti()) if(s!=null) stampaStudente(s);
+        if (classe.getStudenti().isEmpty()) {
+            System.out.println("Non esiste alcun studente.");
+        } else {
+            for (Studente s : classe.getStudenti()) {
+                stampaStudente(s);
+            }
+        }
     }
 
     // =============== CALENDARIO + COMPITI FILTRATI ===============
+
     /**
      * Mostra il calendario scolastico e filtra i compiti per giorno, settimana e mese selezionati.
      */
     private static void calendarioConCompiti() {
-        calendario.stampaCalendario(); // Stampa il calendario scolastico
-        if(COMPITI.isEmpty()){ System.out.println("Nessun compito registrato."); return; }
-        LocalDate d = readDate("Data da filtrare (yyyy-MM-dd): ");
+        calendario.stampaCalendario();
+        if (COMPITI.isEmpty()) {
+            System.out.println("Nessun compito registrato.");
+            return;
+        }
+        LocalDate d = readDate("Data da filtrare (yyyy-MM-dd): ", true);
 
         WeekFields wf = WeekFields.of(Locale.getDefault());
         int week = d.get(wf.weekOfWeekBasedYear());
 
         System.out.println("\nCompiti del giorno:");
-        for(Compito c: COMPITI) if(c.getData().equals(d)) printCompito(c);
+        for (Compito c : COMPITI) if (c.getData().equals(d)) printCompito(c);
         System.out.println("\nCompiti della settimana:");
-        for(Compito c: COMPITI) if(c.getData().get(wf.weekOfWeekBasedYear())==week) printCompito(c);
+        for (Compito c : COMPITI) if (c.getData().get(wf.weekOfWeekBasedYear()) == week) printCompito(c);
         System.out.println("\nCompiti del mese:");
-        for(Compito c: COMPITI) if(c.getData().getMonth()==d.getMonth()) printCompito(c);
+        for (Compito c : COMPITI) if (c.getData().getMonth() == d.getMonth()) printCompito(c);
     }
 
     // ========================= UTILITIES =========================
@@ -240,12 +278,27 @@ public class MenuPrincipale {
      * Permette di selezionare uno studente dalla lista tramite il suo numero.
      */
     private static Studente pickStudente() {
-        Studente[] arr = classe.getStudenti();
-        for(int i=0;i<arr.length;i++) if(arr[i]!=null) System.out.println((i+1)+") "+arr[i].getNomeCognome());
+        ArrayList<Studente> lista = classe.getStudenti();
+        if (lista.isEmpty()) {
+            System.out.println("Nessuno studente presente.");
+            return null;
+        }
+        for (int i = 0; i < lista.size(); i++) {
+            System.out.println((i + 1) + ") " + lista.get(i).getNomeCognome());
+        }
         System.out.print("Seleziona numero: ");
-        int idx = Integer.parseInt(SC.nextLine())-1;
-        if(idx<0 || idx>=arr.length || arr[idx]==null){ System.out.println("Indice errato."); return null; }
-        return arr[idx];
+        int idx;
+        try {
+            idx = Integer.parseInt(SC.nextLine()) - 1;
+        } catch (NumberFormatException e) {
+            System.out.println("Input non valido.");
+            return null;
+        }
+        if (idx < 0 || idx >= lista.size()) {
+            System.out.println("Indice errato.");
+            return null;
+        }
+        return lista.get(idx);
     }
 
     /**
@@ -253,21 +306,27 @@ public class MenuPrincipale {
      */
     private static void stampaStudente(Studente s) {
         System.out.println("------------------------------");
-        System.out.println(s.getNomeCognome()+" ("+s.getDataNascita()+")");
+        System.out.println(s.getNomeCognome() + " (" + s.getDataNascita() + ")");
 
         System.out.println("Presenze:");
-        for(Presenza p: s.getPresenze()) { if(p==null) break; System.out.println(p.getGiorno()+" -> "+p.getStato()); }
+        for (Presenza p : s.getPresenze()) {
+            if (p == null) break;
+            System.out.println(p.getGiorno() + " -> " + p.getStato());
+        }
 
         System.out.println("Voti:");
         Voti[][] vv = s.getVoti();
-        for(Voti[] row : vv) {
-            for(Voti v : row) {
-                if(v!=null) System.out.println(v.getMateria()+" "+v.getVoto()+" ("+v.getData()+")");
+        for (Voti[] row : vv) {
+            for (Voti v : row) {
+                if (v != null) System.out.println(v.getMateria() + " " + v.getVoto() + " (" + v.getData() + ")");
             }
         }
 
         System.out.println("Note:");
-        for(Nota n: s.getNote()) { if(n==null) break; System.out.println(n.getData()+": "+n.getTesto()); }
+        for (Nota n : s.getNote()) {
+            if (n == null) break;
+            System.out.println(n.getData() + ": " + n.getTesto());
+        }
         System.out.println("------------------------------");
     }
 
@@ -275,35 +334,37 @@ public class MenuPrincipale {
      * Stampa le informazioni di un compito a schermo.
      */
     private static void printCompito(Compito c) {
-        System.out.println(" • ["+c.getData()+"] "+c.getMateria()+" - "+c.getTesto());
+        System.out.println(" • [" + c.getData() + "] " + c.getMateria() + " - " + c.getTesto());
     }
 
     /**
-     * Restituisce la prima posizione libera di un array oppure -1 se pieno.
-     * @param arr Array generico
-     * @return posizione libera oppure -1
+     * Trova il primo posto libero in un array (presenze, voti, note).
      */
     private static <T> int firstFree(T[] arr) {
-        for(int i=0;i<arr.length;i++) if(arr[i]==null) return i;
+        for (int i = 0; i < arr.length; i++) if (arr[i] == null) return i;
         return -1;
     }
 
     /**
      * Permette di leggere una data dal terminale usando il formato standard, con verifica.
      * Se la data inserita non è valida, chiede di nuovo all'utente.
-     * @param prompt Messaggio di richiesta all'utente
+     *
+     * @param prompt              Messaggio di richiesta all'utente
+     * @param checkAnnoScolastico true se vuoi controllare che la data sia nell'anno scolastico, false se vuoi accettare qualsiasi data
      * @return Data inserita
      */
-    private static LocalDate readDate(String prompt) {
-        while(true) {
+    private static LocalDate readDate(String prompt, boolean checkAnnoScolastico) {
+        while (true) {
             System.out.print(prompt);
             String txt = SC.nextLine();
             try {
                 LocalDate d = LocalDate.parse(txt, DF);
-                // Controllo che la data sia interna al calendario scolastico
-                if (d.isBefore(calendario.getInizioAnno()) || d.isAfter(calendario.getFineAnno())) {
-                    System.out.println("Data non all'interno dell'anno scolastico.");
-                    continue;
+                if (checkAnnoScolastico) {
+                    // Controllo che la data sia interna al calendario scolastico
+                    if (d.isBefore(calendario.getInizioAnno()) || d.isAfter(calendario.getFineAnno())) {
+                        System.out.println("Data non all'interno dell'anno scolastico.");
+                        continue;
+                    }
                 }
                 return d;
             } catch (DateTimeParseException ex) {

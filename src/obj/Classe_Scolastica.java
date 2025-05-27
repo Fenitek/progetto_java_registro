@@ -6,35 +6,34 @@ import java.util.*;
 
 public class Classe_Scolastica {
     private final int MAX_STUDENTI;
-    private Studente[] classe;
+    private ArrayList<Studente> studenti = new ArrayList<>();
     static Scanner in = new Scanner(System.in);
     private final Calendario calendario;
 
     public Classe_Scolastica(String _sezione, int _classe, String _indirizzo, int _maxStudenti, Calendario _calendario) {
         this.MAX_STUDENTI = _maxStudenti;
-        this.classe = new Studente[MAX_STUDENTI];
+        this.studenti = new ArrayList<>(studenti);
         this.calendario = _calendario;
 
     }
 
-    public Studente[] inizializzaAlunni() {
-        for (int i = 0; i < MAX_STUDENTI; i++) {
+    public ArrayList<Studente> inizializzaAlunni(int maxStudenti, Calendario calendario, Scanner in) {
+        ArrayList<Studente> studenti = new ArrayList<>();
 
+        for (int i = 0; i < maxStudenti; i++) {
             System.out.print("Inserisci il nome dello studente: ");
             String nome = in.nextLine().trim();
 
             System.out.print("Inserisci il cognome dello studente: ");
             String cognome = in.nextLine().trim();
 
-            /*Data di nascita*/
             int anno, mese, giorno;
             LocalDate dataDiNascita;
 
             // ---- ANNO ----
-            int annoCorrente = calendario. getAnnoOggi();  // anno
+            int annoCorrente = calendario.getAnnoOggi();
             while (true) {
                 System.out.print("Anno di nascita (1900-" + (annoCorrente - 1) + "): ");
-
                 String tmp = in.nextLine();
                 try {
                     anno = Integer.parseInt(tmp);
@@ -54,31 +53,34 @@ public class Classe_Scolastica {
                 System.out.println("Valore non valido, riprova.");
             }
 
-            // ---- GIORNO (verifico col mese scelto) ----
+            // ---- GIORNO ----
             while (true) {
                 System.out.print("Giorno di nascita: ");
                 String tmp = in.nextLine();
                 try {
                     giorno = Integer.parseInt(tmp);
-                    // Creo la data per verificare se il giorno esiste davvero
                     dataDiNascita = LocalDate.of(anno, mese, giorno);
-                    break;          // se non lancia eccezione la data è valida
+                    break;
                 } catch (NumberFormatException | DateTimeException e) {
                     System.out.println("Data non valida per quel mese, riprova.");
                 }
             }
 
-            /* =====================  CREAZIONE STUDENTE  ===================== */
-            classe[i] = new Studente(nome, cognome, dataDiNascita);
+            // === CREAZIONE STUDENTE ===
+            Studente studente = new Studente(nome, cognome, dataDiNascita);
+            studenti.add(studente);
             System.out.println("Studente inserito con successo.\n");
         }
-
-        return classe;
+        return studenti;
     }
 
 
-    public Studente[] getStudenti(){
-        return classe;
+    public void addStudente(Studente s) {
+        studenti.add(s);
+    }
+
+    public ArrayList<Studente> getStudenti() {
+        return studenti;
     }
 
     public int getMAX_STUDENTI(){
