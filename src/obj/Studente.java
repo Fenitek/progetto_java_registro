@@ -6,8 +6,10 @@ import utility.*;
 
 public class Studente {
 	//VARIABILI D'ISTANZA
-	//nome e cognome
-	private String nomeCognome;
+	//nome
+	private String name;
+	//cognome
+	private String surname;
 	//data di nascita
 	private LocalDate dataNascita;
 	//array di presenze
@@ -22,7 +24,11 @@ public class Studente {
 	private int numNote;
 
 	//METODO COSTRUTTORE
-	public Studente(String name, String surname, LocalDate p_data) {
+	public Studente(String _name, String _surname, LocalDate p_data) {
+		//nome
+		this.name = _name;
+		//cognome
+		this.surname = _surname;
 		//data di nascita
 		this.dataNascita = p_data;
 		//array oggetto presenze
@@ -36,8 +42,11 @@ public class Studente {
 	//METODI D'ISTANZA
 	//METODI GET
 	//get nomecognome
-	public String getNomeCognome() {
-		return this.nomeCognome;
+	public String getNome() {
+		return this.name;
+	}
+	public String getCognome() {
+		return this.surname;
 	}
 	//get data nascita
 	public LocalDate getDataNascita() {
@@ -104,5 +113,9 @@ public class Studente {
 		this.presenze[p_indice] = new Presenza(p_data, p_stato);
 	}
 	//AVVISO: quando comunico il p_indice lo posso prendere facendo: getNum... + 1 in modo da ottenere il prossimo spazio liero nell'array/matrice
+
+	public void stampaInfo(){
+		System.out.println("Nome studente: " + this.getNome() + "\nCognome studente: " + this.getCognome());
+	}
 
 }

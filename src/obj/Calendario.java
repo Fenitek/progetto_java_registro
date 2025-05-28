@@ -83,10 +83,10 @@ public class Calendario {
 //    		System.out.println(this.calendarioDate[i].getDayOfMonth() + " " + this.calendarioDate[i].getDayOfWeek());
 //    	}
 //    }
-    
+
     public void stampaCalendario() {
         // Intestazione: mese e anno
-        YearMonth ym = YearMonth.of(annoOggi, giornoOggi);
+        YearMonth ym = YearMonth.of(annoOggi, meseOggi);
         String meseNome = ym.getMonth().getDisplayName(TextStyle.FULL, Locale.ITALIAN); // testo in italiano
         System.out.printf("     %s %d%n", meseNome, ym.getYear());
 

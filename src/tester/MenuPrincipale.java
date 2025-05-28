@@ -230,9 +230,10 @@ public class MenuPrincipale {
      * Stampa il report di uno studente selezionato, mostrando presenze, voti e note.
      */
     private static void reportSingolo() {
-        Studente s =
-                pickStudente();
-        if (s != null) stampaStudente(s);
+        Studente s = pickStudente();
+        if (s != null){
+            s.stampaInfo();
+        }
     }
 
     /**
@@ -283,9 +284,11 @@ public class MenuPrincipale {
             System.out.println("Nessuno studente presente.");
             return null;
         }
+        //stampa per cognome
         for (int i = 0; i < lista.size(); i++) {
-            System.out.println((i + 1) + ") " + lista.get(i).getNomeCognome());
+            System.out.println((i + 1) + ") " + lista.get(i).getNome() + " " + lista.get(i).getCognome());
         }
+        //chiedo il numero dello studente da stampare
         System.out.print("Seleziona numero: ");
         int idx;
         try {
@@ -298,6 +301,7 @@ public class MenuPrincipale {
             System.out.println("Indice errato.");
             return null;
         }
+        //torna l'indice della lista
         return lista.get(idx);
     }
 
@@ -306,7 +310,7 @@ public class MenuPrincipale {
      */
     private static void stampaStudente(Studente s) {
         System.out.println("------------------------------");
-        System.out.println(s.getNomeCognome() + " (" + s.getDataNascita() + ")");
+        System.out.println(s.getNome() + " " + s.getCognome() + " (" + s.getDataNascita() + ")");
 
         System.out.println("Presenze:");
         for (Presenza p : s.getPresenze()) {
