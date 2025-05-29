@@ -113,7 +113,7 @@ public class MenuPrincipale {
                 case "4" -> inserisciNota();
                 case "5" -> inserisciCompito();
                 case "6" -> reportSingolo();
-                case "7" -> reportClasse();
+                case "7" -> classe.stampaClasse();
                 case "8" -> calendarioConCompiti();
                 case "9" -> attivo = false; // Esce dal programma
                 default -> System.out.println("Opzione non valida.");
@@ -328,7 +328,9 @@ public class MenuPrincipale {
 
         System.out.println("Note:");
         for (Nota n : s.getNote()) {
-            if (n == null) break;
+            if (n == null) {
+                break;
+            }
             System.out.println(n.getData() + ": " + n.getTesto());
         }
         System.out.println("------------------------------");
@@ -345,7 +347,13 @@ public class MenuPrincipale {
      * Trova il primo posto libero in un array (presenze, voti, note).
      */
     private static <T> int firstFree(T[] arr) {
-        for (int i = 0; i < arr.length; i++) if (arr[i] == null) return i;
+
+        for (int i = 0; i < arr.length; i++){
+
+            if (arr[i] == null) {
+                return i;
+            }
+        }
         return -1;
     }
 

@@ -7,14 +7,35 @@ import java.util.*;
 public class Classe_Scolastica {
     private final int MAX_STUDENTI;
     private ArrayList<Studente> studenti = new ArrayList<>();
-    static Scanner in = new Scanner(System.in);
+    static Scanner in = new Scanner(System.in); //per la configurazione degli studenti
     private final Calendario calendario;
+
+    private String sezione;
+    private int classe;
+    private String indirizzo;
+
 
     public Classe_Scolastica(String _sezione, int _classe, String _indirizzo, int _maxStudenti, Calendario _calendario) {
         this.MAX_STUDENTI = _maxStudenti;
         this.studenti = new ArrayList<>(studenti);
         this.calendario = _calendario;
 
+        //inizializzazione della classe
+        this.sezione = _sezione;
+        this.classe = _classe;
+        this.indirizzo = _indirizzo;
+    }
+
+    public String getSezione() {
+        return sezione;
+    }
+
+    public int getClasse() {
+        return classe;
+    }
+
+    public String getIndirizzo() {
+        return indirizzo;
     }
 
     public ArrayList<Studente> inizializzaAlunni(int maxStudenti, Calendario calendario, Scanner in) {
@@ -74,6 +95,45 @@ public class Classe_Scolastica {
         return studenti;
     }
 
+    public void stampaClasse(){
+        //stampa delle informazioni della classe
+        System.out.println("Classe: " + this.classe + " "+  this.sezione + " " + this.indirizzo);
+        System.out.println("================================================");
+        System.out.println("Alunni: ");
+        if (this.studenti.isEmpty()) {
+            System.out.println("Non esiste alcun studente.");
+        } else {
+            for (Studente s : this.studenti) {
+
+                    System.out.println("------------------------------");
+                    System.out.println(s.getNome() + " " + s.getCognome() + " (" + s.getDataNascita() + ")");
+
+                    System.out.println("Presenze:");
+                    for (Presenza p : s.getPresenze()) {
+                        if (p == null) break;
+                        System.out.println(p.getGiorno() + " -> " + p.getStato());
+                    }
+
+                    System.out.println("Voti:");
+                    Voti[][] vv = s.getVoti();
+                    for (Voti[] row : vv) {
+                        for (Voti v : row) {
+                            if (v != null) System.out.println(v.getMateria() + " " + v.getVoto() + " (" + v.getData() + ")");
+                        }
+                    }
+
+                    System.out.println("Note:");
+                    for (Nota n : s.getNote()) {
+                        if (n == null) {
+                            break;
+                        }
+                        System.out.println(n.getData() + ": " + n.getTesto());
+                    }
+                    System.out.println("------------------------------");
+
+            }
+        }
+    }
 
     public void addStudente(Studente s) {
         studenti.add(s);
