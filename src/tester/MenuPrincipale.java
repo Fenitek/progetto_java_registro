@@ -2,6 +2,7 @@ package tester;
 
 import obj.*;
 import utility.Materie;
+import utility.UtilityMenu;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
@@ -153,7 +154,7 @@ public class MenuPrincipale {
         String nome = SC.nextLine();
         System.out.print("Cognome: ");
         String cog = SC.nextLine();
-        LocalDate nascita = readDate("Nascita (yyyy-MM-dd): ", false);
+        LocalDate nascita = UtilityMenu.readDate("Nascita (yyyy-MM-dd): ", false, SC, DF, calendario);
         Studente s = new Studente(nome, cog, nascita);
         lista.add(s);
         System.out.println("Studente inserito.");
@@ -163,12 +164,12 @@ public class MenuPrincipale {
      * Registra una presenza o assenza per uno studente specifico in una certa data.
      */
     private static void registraPresenza() {
-        Studente s = pickStudente();
+        Studente s = UtilityMenu.pickStudente(classe,SC);
         if (s == null) return; //studente non trovato
-        LocalDate d = readDate("Data (yyyy-MM-dd): ", true);
+        LocalDate d = UtilityMenu.readDate("Nascita (yyyy-MM-dd): ", false, SC, DF, calendario);
         System.out.print("Stato (P/A): ");
         char stato = SC.nextLine().trim().toUpperCase().charAt(0);
-        int pos = firstFree(s.getPresenze());
+        int pos = UtilityMenu.firstFree(s.getPresenze());
         if (pos == -1) {
             System.out.println("Array pieno.");
             return;
@@ -181,7 +182,7 @@ public class MenuPrincipale {
      * Permette di inserire un nuovo voto per uno studente in una materia, indicando anche la data.
      */
     private static void inserisciVoto() {
-        Studente s = pickStudente();
+        Studente s = UtilityMenu.pickStudente(classe,SC);
         if (s == null) return;
         System.out.println("Materie: ");
         for (String m : Materie.arrayMateria) System.out.print(m + " ");
@@ -190,7 +191,7 @@ public class MenuPrincipale {
         String mat = SC.nextLine();
         System.out.print("Voto (1-10): ");
         int voto = Integer.parseInt(SC.nextLine());
-        LocalDate d = readDate("Data verifica (yyyy-MM-dd): ", true);
+        LocalDate d = UtilityMenu.readDate("Nascita (yyyy-MM-dd): ", false, SC, DF, calendario);
         s.setVoti(mat, voto, d);
         System.out.println("Voto inserito.");
     }
@@ -199,12 +200,12 @@ public class MenuPrincipale {
      * Inserisce una nota disciplinare o informativa per uno studente.
      */
     private static void inserisciNota() {
-        Studente s = pickStudente();
+        Studente s = UtilityMenu.pickStudente(classe,SC);
         if (s == null) return;
-        LocalDate d = readDate("Data (yyyy-MM-dd): ", true);
+        LocalDate d = UtilityMenu.readDate("Nascita (yyyy-MM-dd): ", false, SC, DF, calendario);
         System.out.print("Nota: ");
         String testo = SC.nextLine();
-        int pos = firstFree(s.getNote());
+        int pos = UtilityMenu.firstFree(s.getNote());
         if (pos == -1) {
             System.out.println("Array pieno.");
             return;
@@ -219,7 +220,7 @@ public class MenuPrincipale {
     private static void inserisciCompito() {
         System.out.print("Materia: ");
         String mat = SC.nextLine();
-        LocalDate cons = readDate("Consegna (yyyy-MM-dd): ", true);
+        LocalDate cons = UtilityMenu.readDate("Nascita (yyyy-MM-dd): ", false, SC, DF, calendario);
         System.out.print("Descrizione: ");
         String desc = SC.nextLine();
         COMPITI.add(new Compito(desc, mat, cons));
@@ -230,7 +231,7 @@ public class MenuPrincipale {
      * Stampa il report di uno studente selezionato, mostrando presenze, voti e note.
      */
     private static void reportSingolo() {
-        Studente s = pickStudente();
+        Studente s = UtilityMenu.pickStudente(classe,SC);
         if (s != null){
             s.stampaInfo();
         }
@@ -244,7 +245,7 @@ public class MenuPrincipale {
             System.out.println("Non esiste alcun studente.");
         } else {
             for (Studente s : classe.getStudenti()) {
-                stampaStudente(s);
+                UtilityMenu.stampaStudente(s);
             }
         }
     }
@@ -260,17 +261,17 @@ public class MenuPrincipale {
             System.out.println("Nessun compito registrato.");
             return;
         }
-        LocalDate d = readDate("Data da filtrare (yyyy-MM-dd): ", true);
+        LocalDate d = UtilityMenu.readDate("Nascita (yyyy-MM-dd): ", false, SC, DF, calendario);
 
         WeekFields wf = WeekFields.of(Locale.getDefault());
         int week = d.get(wf.weekOfWeekBasedYear());
 
         System.out.println("\nCompiti del giorno:");
-        for (Compito c : COMPITI) if (c.getData().equals(d)) printCompito(c);
+        for (Compito c : COMPITI) if (c.getData().equals(d)) UtilityMenu.printCompito(c);
         System.out.println("\nCompiti della settimana:");
-        for (Compito c : COMPITI) if (c.getData().get(wf.weekOfWeekBasedYear()) == week) printCompito(c);
+        for (Compito c : COMPITI) if (c.getData().get(wf.weekOfWeekBasedYear()) == week) UtilityMenu.printCompito(c);
         System.out.println("\nCompiti del mese:");
-        for (Compito c : COMPITI) if (c.getData().getMonth() == d.getMonth()) printCompito(c);
+        for (Compito c : COMPITI) if (c.getData().getMonth() == d.getMonth()) UtilityMenu.printCompito(c);
     }
 
     // ========================= UTILITIES =========================
@@ -278,6 +279,7 @@ public class MenuPrincipale {
     /**
      * Permette di selezionare uno studente dalla lista tramite il suo numero.
      */
+    /*
     private static Studente pickStudente() {
         ArrayList<Studente> lista = classe.getStudenti();
         if (lista.isEmpty()) {
@@ -303,11 +305,12 @@ public class MenuPrincipale {
         }
         //torna l'indice della lista
         return lista.get(idx);
-    }
+    }*/
 
     /**
      * Stampa tutte le informazioni di uno studente: presenze, voti, note.
      */
+    /*
     private static void stampaStudente(Studente s) {
         System.out.println("------------------------------");
         System.out.println(s.getNome() + " " + s.getCognome() + " (" + s.getDataNascita() + ")");
@@ -334,18 +337,20 @@ public class MenuPrincipale {
             System.out.println(n.getData() + ": " + n.getTesto());
         }
         System.out.println("------------------------------");
-    }
+    }*/
 
     /**
      * Stampa le informazioni di un compito a schermo.
      */
+    /*
     private static void printCompito(Compito c) {
         System.out.println(" • [" + c.getData() + "] " + c.getMateria() + " - " + c.getTesto());
-    }
+    }*/
 
     /**
      * Trova il primo posto libero in un array (presenze, voti, note).
      */
+    /*
     private static <T> int firstFree(T[] arr) {
 
         for (int i = 0; i < arr.length; i++){
@@ -355,7 +360,7 @@ public class MenuPrincipale {
             }
         }
         return -1;
-    }
+    }*/
 
     /**
      * Permette di leggere una data dal terminale usando il formato standard, con verifica.
@@ -365,6 +370,7 @@ public class MenuPrincipale {
      * @param checkAnnoScolastico true se vuoi controllare che la data sia nell'anno scolastico, false se vuoi accettare qualsiasi data
      * @return Data inserita
      */
+    /*
     private static LocalDate readDate(String prompt, boolean checkAnnoScolastico) {
         while (true) {
             System.out.print(prompt);
@@ -383,5 +389,5 @@ public class MenuPrincipale {
                 System.out.println("Formato data non valido. Inserire come yyyy-MM-dd.");
             }
         }
-    }
+    }*/
 }
