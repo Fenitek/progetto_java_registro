@@ -27,6 +27,7 @@ public class MenuPrincipale {
     // ----------------------------- MAIN -----------------------------
     public static void main(String[] args) {
         configuraRegistro();
+        System.out.println(calendario.getFineAnno().toString());
         menuLoop();
         System.out.println("\nGrazie per aver utilizzato il registro. Arrivederci!");
     }
@@ -53,7 +54,7 @@ public class MenuPrincipale {
         }
 
         // Inizializzazione del calendario scolastico a partire dal 12 settembre
-        int giorno = 12, mese = 9, durata = 250;
+        int giorno = 12, mese = 9, durata =268;
         while (true) {
             try {
                 calendario = new Calendario(anno, mese, giorno, durata);
@@ -166,7 +167,7 @@ public class MenuPrincipale {
     private static void registraPresenza() {
         Studente s = UtilityMenu.pickStudente(classe,SC);
         if (s == null) return; //studente non trovato
-        LocalDate d = UtilityMenu.readDate("Nascita (yyyy-MM-dd): ", false, SC, DF, calendario);
+        LocalDate d = UtilityMenu.readDate("Data (yyyy-MM-dd): ", true, SC, DF, calendario);
         System.out.print("Stato (P/A): ");
         char stato = SC.nextLine().trim().toUpperCase().charAt(0);
         int pos = UtilityMenu.firstFree(s.getPresenze());
@@ -191,7 +192,7 @@ public class MenuPrincipale {
         String mat = SC.nextLine();
         System.out.print("Voto (1-10): ");
         int voto = Integer.parseInt(SC.nextLine());
-        LocalDate d = UtilityMenu.readDate("Nascita (yyyy-MM-dd): ", false, SC, DF, calendario);
+        LocalDate d = UtilityMenu.readDate("Data (yyyy-MM-dd): ", true, SC, DF, calendario);
         s.setVoti(mat, voto, d);
         System.out.println("Voto inserito.");
     }
@@ -202,7 +203,7 @@ public class MenuPrincipale {
     private static void inserisciNota() {
         Studente s = UtilityMenu.pickStudente(classe,SC);
         if (s == null) return;
-        LocalDate d = UtilityMenu.readDate("Nascita (yyyy-MM-dd): ", false, SC, DF, calendario);
+        LocalDate d = UtilityMenu.readDate("Data (yyyy-MM-dd): ", true, SC, DF, calendario);
         System.out.print("Nota: ");
         String testo = SC.nextLine();
         int pos = UtilityMenu.firstFree(s.getNote());
@@ -220,7 +221,7 @@ public class MenuPrincipale {
     private static void inserisciCompito() {
         System.out.print("Materia: ");
         String mat = SC.nextLine();
-        LocalDate cons = UtilityMenu.readDate("Nascita (yyyy-MM-dd): ", false, SC, DF, calendario);
+        LocalDate cons = UtilityMenu.readDate("Data (yyyy-MM-dd): ", true, SC, DF, calendario);
         System.out.print("Descrizione: ");
         String desc = SC.nextLine();
         COMPITI.add(new Compito(desc, mat, cons));
@@ -250,18 +251,21 @@ public class MenuPrincipale {
         }
     }
 
-    // =============== CALENDARIO + COMPITI FILTRATI ===============
+    // =============== CALENDARIO - COMPITI FILTRATI ===============
 
     /**
      * Mostra il calendario scolastico e filtra i compiti per giorno, settimana e mese selezionati.
      */
     private static void calendarioConCompiti() {
+        //uso il metodo creato nella classe calendario
         calendario.stampaCalendario();
+
+        //mostrare i compiti
         if (COMPITI.isEmpty()) {
             System.out.println("Nessun compito registrato.");
             return;
         }
-        LocalDate d = UtilityMenu.readDate("Nascita (yyyy-MM-dd): ", false, SC, DF, calendario);
+        LocalDate d = UtilityMenu.readDate("Filtra per data (yyyy-MM-dd): ", true, SC, DF, calendario);
 
         WeekFields wf = WeekFields.of(Locale.getDefault());
         int week = d.get(wf.weekOfWeekBasedYear());

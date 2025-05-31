@@ -91,21 +91,29 @@ public class UtilityMenu {
      * @param checkAnnoScolastico true se vuoi controllare che la data sia nell'anno scolastico, false se vuoi accettare qualsiasi data
      * @return Data inserita
      */
-    public static LocalDate readDate(String prompt, boolean checkAnnoScolastico, Scanner SC, DateTimeFormatter DF, Calendario _calendario) {
+    public static LocalDate readDate(
+            String prompt, //stringa prima dell'inserimento data
+            boolean checkAnnoScolastico,  //se true verifica se è nell'anno scolastico, se è false non verifica (data di nascita)
+            Scanner SC, //si va ad usare lo stesso stream aperto nell'altra classe.
+            DateTimeFormatter DF, // formattazione della data (yyyy-MM-dd)
+            Calendario _calendario
+    )
+    {
+        //fino a data corretta
         while (true) {
             System.out.print(prompt);
             String txt = SC.nextLine();
             try {
-                LocalDate d = LocalDate.parse(txt, DF);
+                LocalDate d = LocalDate.parse(txt, DF); //converte la stringa in un oggetto localdate usando il formattatore "DF"
                 if (checkAnnoScolastico) {
                     // Controllo che la data sia interna al calendario scolastico
                     if (d.isBefore(_calendario.getInizioAnno()) || d.isAfter(_calendario.getFineAnno())) {
                         System.out.println("Data non all'interno dell'anno scolastico.");
-                        continue;
+                        continue; //torna all'inizio del while
                     }
                 }
-                return d;
-            } catch (DateTimeParseException ex) {
+                return d; // la data vabene
+            } catch (DateTimeParseException ex) { // la data non rispetta la formattazione
                 System.out.println("Formato data non valido. Inserire come yyyy-MM-dd.");
             }
         }

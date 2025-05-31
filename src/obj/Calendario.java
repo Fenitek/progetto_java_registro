@@ -28,7 +28,7 @@ public class Calendario {
         this.data = LocalDate.of(_anno, _mese, _giorno);
         this.GIORNI_CALENDARIO = _calendarioGiorni;
         this.calendarioDate = new LocalDate[GIORNI_CALENDARIO]; //inizializzo l'array del calendario
-        inizializzaCalendario(_anno, _mese, _giorno);
+        inizializzaCalendario();
 
         // salvo i dati mese giorno ed anno.
         this.giornoOggi = data.getDayOfMonth();
@@ -38,13 +38,16 @@ public class Calendario {
     }
     
     //Inizializzo l'array che gestisce i giorni.
-    private void inizializzaCalendario(int _anno, int _mese, int _giorno) {
-    	
-    	for(int i = 0; i<GIORNI_CALENDARIO; i++) {
-    		this.calendarioDate[i] = LocalDate.of(_anno, _mese, _giorno++);
-    	}
-    	
-	}
+    private void inizializzaCalendario() {
+
+        LocalDate current = this.data;
+        for (int i = 0; i < GIORNI_CALENDARIO; i++) {
+            this.calendarioDate[i] = current;
+            //aggiungiamo giorni fino ad arrivare all'ultimo giorno del calendario desiderato
+            current = current.plusDays(1);
+        }
+
+    }
 
     
     public LocalDate getDataOggi() {
