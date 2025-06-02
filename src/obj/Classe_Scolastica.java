@@ -2,6 +2,7 @@ package obj;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class Classe_Scolastica {
@@ -13,6 +14,9 @@ public class Classe_Scolastica {
     private String sezione;
     private int classe;
     private String indirizzo;
+    private NotaClasse[] notediClasse;
+
+
 
 
     public Classe_Scolastica(String _sezione, int _classe, String _indirizzo, int _maxStudenti, Calendario _calendario) {
@@ -24,8 +28,12 @@ public class Classe_Scolastica {
         this.sezione = _sezione;
         this.classe = _classe;
         this.indirizzo = _indirizzo;
-    }
+        this.notediClasse = new NotaClasse[100];
 
+    }
+    public NotaClasse[] getNotediClasse() {
+        return notediClasse;
+    }
     public String getSezione() {
         return sezione;
     }
@@ -95,9 +103,34 @@ public class Classe_Scolastica {
         return studenti;
     }
 
+    public void setNotediClasse(LocalDate p_data, String p_testo, int p_indice) {
+        //inizializzo nota
+        this.notediClasse[p_indice] = new NotaClasse(p_testo, p_data);
+    }
+
     public void stampaClasse(){
         //stampa delle informazioni della classe
+
         System.out.println("Classe: " + this.classe + " "+  this.sezione + " " + this.indirizzo);
+        System.out.println("Note di classe: " );
+        DateTimeFormatter DF = DateTimeFormatter.ISO_LOCAL_DATE;
+
+        // 3) Scorro l'array di note di classe (NotaClasse[])
+        for (int i = 0; i < notediClasse.length; i++) {
+            NotaClasse nota = notediClasse[i];
+            if (nota == null) {
+                // Se incontriamo un elemento null, interrompiamo il ciclo perché
+                // presumibilmente non ci sono altre note valide oltre questo punto
+                break;
+            }
+
+            // Recupero la data della nota e la converto in stringa formattata
+            LocalDate dataNota = nota.getData();
+            String dataStr = dataNota.format(DF);
+
+            // Stampo descrizione e data
+            System.out.println("- Descrizione: " + nota.getTesto() + " | Data: " + dataStr);
+        }
         System.out.println("================================================");
         System.out.println("Alunni: ");
         if (this.studenti.isEmpty()) {

@@ -113,11 +113,12 @@ public class MenuPrincipale {
                 case "2" -> registraPresenza();
                 case "3" -> inserisciVoto();
                 case "4" -> inserisciNota();
-                case "5" -> inserisciCompito();
-                case "6" -> reportSingolo();
-                case "7" -> classe.stampaClasse();
-                case "8" -> calendarioConCompiti();
-                case "9" -> attivo = false; // Esce dal programma
+                case "5" -> inserisciNotaClasse();
+                case "6" -> inserisciCompito();
+                case "7" -> reportSingolo();
+                case "8" -> classe.stampaClasse();
+                case "9" -> calendarioConCompiti();
+                case "0" -> attivo = false; // Esce dal programma
                 default -> System.out.println("Opzione non valida.");
             }
             System.out.println();
@@ -133,11 +134,12 @@ public class MenuPrincipale {
         System.out.println("2) Presenza / assenza");
         System.out.println("3) Nuovo voto");
         System.out.println("4) Nuova nota");
-        System.out.println("5) Nuovo compito");
-        System.out.println("6) Report studente");
-        System.out.println("7) Report classe");
-        System.out.println("8) Calendario + compiti");
-        System.out.println("9) Esci");
+        System.out.println("5) Nuova nota di classe");
+        System.out.println("6) Nuovo compito");
+        System.out.println("7) Report studente");
+        System.out.println("8) Report classe");
+        System.out.println("9) Calendario + compiti");
+        System.out.println("0) Esci");
     }
 
     // ========================= OPERAZIONI =========================
@@ -172,7 +174,7 @@ public class MenuPrincipale {
         char stato = SC.nextLine().trim().toUpperCase().charAt(0);
         int pos = UtilityMenu.firstFree(s.getPresenze());
         if (pos == -1) {
-            System.out.println("Array pieno.");
+            System.out.println("Errore: massimo raggiunto");
             return;
         }
         s.setPresenze(d, stato, pos);
@@ -184,9 +186,14 @@ public class MenuPrincipale {
      */
     private static void inserisciVoto() {
         Studente s = UtilityMenu.pickStudente(classe,SC);
-        if (s == null) return;
+        if (s == null){
+            System.out.println("nessun studente disponibile.");
+            return;
+        }
         System.out.println("Materie: ");
-        for (String m : Materie.arrayMateria) System.out.print(m + " ");
+        for (String m : Materie.arrayMateria){
+            System.out.print(m + " ");
+        }
         System.out.println();
         System.out.print("Materia: ");
         String mat = SC.nextLine();
@@ -208,10 +215,26 @@ public class MenuPrincipale {
         String testo = SC.nextLine();
         int pos = UtilityMenu.firstFree(s.getNote());
         if (pos == -1) {
-            System.out.println("Array pieno.");
+            System.out.println("Errore: massimo raggiunto");
             return;
         }
         s.setNote(d, testo, pos);
+        System.out.println("Nota inserita.");
+    }
+
+    /**
+     * Inserisce una nota disciplinare o informativa per uno studente.
+     */
+    private static void inserisciNotaClasse() {
+        LocalDate d = UtilityMenu.readDate("Data (yyyy-MM-dd): ", true, SC, DF, calendario);
+        System.out.print("Nota di classe: ");
+        String testo = SC.nextLine();
+        int pos = UtilityMenu.firstFree(classe.getNotediClasse());
+        if (pos == -1) {
+            System.out.println("Errore: massimo raggiunto");
+            return;
+        }
+        classe.setNotediClasse(d, testo, pos);
         System.out.println("Nota inserita.");
     }
 
